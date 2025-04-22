@@ -1,0 +1,148 @@
+/* src/App.css */
+
+/* Main Container Styling */
+.main-container {
+  background-color: var(--container-bg);
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px var(--shadow-color);
+  text-align: center;
+  max-width: 90%; /* Limit width */
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center children horizontally */
+}
+
+h1 {
+  color: var(--text-color);
+  margin-top: 0; /* Remove default margin */
+  margin-bottom: 25px;
+  font-weight: 600; /* Use the bolder font weight */
+}
+
+/* Controls Styling */
+.controls {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px; /* Increased gap */
+  padding: 15px;
+  background-color: #fdfdfd; /* Slightly off-white bg for controls */
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  width: fit-content; /* Fit the content width */
+  max-width: 100%; /* Prevent overflow */
+}
+
+.controls label {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Gap between label text and input */
+  font-size: 0.95em;
+}
+
+.controls input[type="number"] {
+  padding: 8px 10px; /* More padding */
+  width: 65px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 1em;
+  font-family: var(--font-family);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.controls input[type="number"]:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2); /* Subtle focus ring */
+}
+
+.controls button {
+  padding: 10px 20px; /* Larger button padding */
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.controls button:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px); /* Slight lift on hover */
+}
+
+.controls button:disabled {
+  background-color: #bdc3c7; /* Greyer disabled state */
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Game Info Styling */
+.game-info {
+    margin-top: 10px; /* Reduced margin */
+    margin-bottom: 15px; /* Space before maze area */
+    min-height: 50px; /* Increased min-height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* Take full width within container */
+}
+
+.timer {
+    font-size: 1.2em; /* Slightly larger timer */
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0 0 8px 0;
+    background-color: #f8f9fa; /* Very light bg */
+    padding: 5px 15px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+.win-message {
+  color: var(--success-color);
+  font-weight: 600;
+  font-size: 1.4em; /* Larger win message */
+  margin-bottom: 5px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Maze Area Styling */
+.maze-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+    width: 100%; /* Ensure it takes space */
+}
+
+
+.status-message {
+    margin-top: 20px;
+    font-style: italic;
+    color: #7f8c8d; /* Muted color */
+    min-height: 1.2em;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+    display: inline-block; /* Center correctly */
+}
+
+.instructions {
+    margin-top: 20px;
+    color: #7f8c8d; /* Muted color */
+    font-size: 0.9em;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}

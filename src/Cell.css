@@ -1,0 +1,49 @@
+/* src/Cell.css */
+.cell {
+    width: 20px; /* Cell size */
+    height: 20px;
+    background-color: #f0f0f0; /* Default path color */
+    position: relative; /* Needed for z-index */
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Wall Styles */
+  .cell.wall-top { border-top: 2px solid black; }
+  .cell.wall-right { border-right: 2px solid black; }
+  .cell.wall-bottom { border-bottom: 2px solid black; }
+  .cell.wall-left { border-left: 2px solid black; }
+  
+  /* Special Cell Styles */
+  .cell.start {
+      background-color: lightgreen;
+  }
+  
+  .cell.end {
+      background-color: lightcoral;
+  }
+  
+  /* Player Style (Simple version) */
+  .cell.player {
+    background-color: dodgerblue;
+    border: 2px solid navy;
+    box-sizing: border-box;
+    border-radius: 50%;
+    z-index: 5; /* Ensure player visual is above start/end background */
+  }
+  
+  /* Style when player is on the end cell */
+  .cell.end.player {
+     background-color: darkviolet;
+     border-color: black;
+  }
+  
+  /* Style for error cells */
+  .cell.error-cell {
+      background-color: #ffcccc; /* Lighter red */
+      color: #a00000; /* Darker red text */
+      font-weight: bold;
+      border: 1px solid red;
+  }

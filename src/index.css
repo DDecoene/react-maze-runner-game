@@ -1,0 +1,35 @@
+/* src/index.css */
+:root {
+  /* Color Palette */
+  --bg-color: #f4f7f9; /* Light grey-blue background */
+  --container-bg: #ffffff; /* White container */
+  --primary-color: #3498db; /* Blue for buttons/accents */
+  --primary-hover: #2980b9; /* Darker blue for hover */
+  --text-color: #34495e; /* Dark grey-blue text */
+  --border-color: #e0e0e0; /* Light grey for borders */
+  --success-color: #2ecc71; /* Green for win message */
+  --shadow-color: rgba(0, 0, 0, 0.1); /* Soft shadow */
+
+  /* Font */
+  --font-family: 'Poppins', sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  display: flex; /* Use flexbox for centering */
+  justify-content: center;
+  align-items: flex-start; /* Align to top */
+  min-height: 100vh;
+  padding: 20px; /* Add some padding around the content */
+  box-sizing: border-box;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
