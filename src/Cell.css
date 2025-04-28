@@ -1,6 +1,7 @@
 /* src/Cell.css */
 .cell {
-    width: 20px; /* Cell size */
+    /* Base size for larger screens */
+    width: 20px;
     height: 20px;
     background-color: #f0f0f0; /* Default path color */
     position: relative; /* Needed for z-index */
@@ -8,42 +9,86 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  
-  /* Wall Styles */
-  .cell.wall-top { border-top: 2px solid black; }
-  .cell.wall-right { border-right: 2px solid black; }
-  .cell.wall-bottom { border-bottom: 2px solid black; }
-  .cell.wall-left { border-left: 2px solid black; }
-  
-  /* Special Cell Styles */
-  .cell.start {
-      background-color: lightgreen;
-  }
-  
-  .cell.end {
-      background-color: lightcoral;
-  }
-  
-  /* Player Style (Simple version) */
-  .cell.player {
-    background-color: dodgerblue;
-    border: 2px solid navy;
-    box-sizing: border-box;
-    border-radius: 50%;
-    z-index: 5; /* Ensure player visual is above start/end background */
-  }
-  
-  /* Style when player is on the end cell */
-  .cell.end.player {
-     background-color: darkviolet;
-     border-color: black;
-  }
-  
-  /* Style for error cells */
-  .cell.error-cell {
-      background-color: #ffcccc; /* Lighter red */
-      color: #a00000; /* Darker red text */
-      font-weight: bold;
-      border: 1px solid red;
-  }
+    /* Add transition for smoother size changes if desired */
+    /* transition: width 0.2s ease, height 0.2s ease; */
+}
+
+/* Wall Styles */
+.cell.wall-top { border-top: 2px solid black; }
+.cell.wall-right { border-right: 2px solid black; }
+.cell.wall-bottom { border-bottom: 2px solid black; }
+.cell.wall-left { border-left: 2px solid black; }
+
+/* Special Cell Styles */
+.cell.start {
+    background-color: lightgreen;
+}
+
+.cell.end {
+    background-color: lightcoral;
+}
+
+/* Player Style */
+.cell.player {
+  background-color: dodgerblue;
+  border: 2px solid navy;
+  box-sizing: border-box;
+  border-radius: 50%;
+  z-index: 5;
+}
+
+/* Style when player is on the end cell */
+.cell.end.player {
+   background-color: darkviolet;
+   border-color: black;
+}
+
+/* Style for error cells */
+.cell.error-cell {
+    background-color: #ffcccc;
+    color: #a00000;
+    font-weight: bold;
+    border: 1px solid red;
+}
+
+
+/* --- Media Query for Smaller Screens --- */
+@media (max-width: 600px) {
+    .cell {
+        /* Reduce cell size */
+        width: 14px; /* Adjust this value as needed */
+        height: 14px; /* Adjust this value as needed */
+    }
+
+    /* Reduce wall border thickness proportionally */
+    .cell.wall-top { border-top-width: 1px; }
+    .cell.wall-right { border-right-width: 1px; }
+    .cell.wall-bottom { border-bottom-width: 1px; }
+    .cell.wall-left { border-left-width: 1px; }
+
+    /* Optional: Adjust player border if desired */
+    .cell.player {
+         border-width: 1px;
+    }
+     .cell.end.player {
+        border-width: 1px;
+     }
+}
+
+/* Optional: Add another breakpoint for even smaller screens */
+/*
+@media (max-width: 400px) {
+    .cell {
+        width: 10px;
+        height: 10px;
+    }
+     .cell.wall-top,
+     .cell.wall-right,
+     .cell.wall-bottom,
+     .cell.wall-left,
+     .cell.player,
+     .cell.end.player {
+        border-width: 1px;
+    }
+}
+*/

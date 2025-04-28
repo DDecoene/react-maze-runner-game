@@ -25,7 +25,7 @@ body {
   justify-content: center;
   align-items: flex-start; /* Align to top */
   min-height: 100vh;
-  padding: 20px; /* Add some padding around the content */
+  padding: 20px 10px; /* Reduced horizontal padding slightly */
   box-sizing: border-box;
 }
 

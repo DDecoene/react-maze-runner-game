@@ -1,10 +1,12 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+// src/main.jsx
+import React from 'react' // Changed from { StrictMode }
+import ReactDOM from 'react-dom/client' // Changed from { createRoot }
 import './index.css'
 import App from './App.jsx'
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
+// StrictMode removed for cleaner logs, can be added back if needed for dev checks
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>  {/* Re-added StrictMode as it's generally good practice for dev */}
     <App />
-  </StrictMode>,
+  </React.StrictMode>,
 )

@@ -100,3 +100,4 @@ dist/
 
 # Debug log from pnpm install/update
 pnpm-debug.log
+out

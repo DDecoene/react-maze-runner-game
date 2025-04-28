@@ -15,11 +15,12 @@ const shuffleArray = (array) => {
 
 // Main Maze Generation Function (Recursive Backtracker)
 export const generateMaze = (width, height) => {
-  console.log(`Generating maze with dimensions: ${width}x${height}`);
+  // console.log(`Generating maze with dimensions: ${width}x${height}`); // Keep for debugging if needed
 
-  if (!Number.isInteger(width) || !Number.isInteger(height) || width <= 0 || height <= 0) {
-    console.error(`Invalid dimensions received: width=${width}, height=${height}. Returning empty grid.`);
-    return [];
+  // Already validated in useMaze hook, but double check is fine
+  if (!Number.isInteger(width) || !Number.isInteger(height) || width < 2 || height < 2) {
+    console.error(`GenerateMaze received invalid dimensions: width=${width}, height=${height}.`);
+    return []; // Return empty grid
   }
 
   const grid = Array(height)
@@ -41,6 +42,7 @@ export const generateMaze = (width, height) => {
   while (visitedCount < totalCells) {
     const { x, y } = currentCell;
     const potentialNeighbors = [];
+    // Find unvisited neighbors
     if (y > 0 && !grid[y - 1][x].visited) potentialNeighbors.push(grid[y - 1][x]);
     if (x < width - 1 && !grid[y][x + 1].visited) potentialNeighbors.push(grid[y][x + 1]);
     if (y < height - 1 && !grid[y + 1][x].visited) potentialNeighbors.push(grid[y + 1][x]);
@@ -51,36 +53,31 @@ export const generateMaze = (width, height) => {
       const nextCell = shuffledNeighbors[0];
       stack.push(currentCell);
 
-      if (nextCell.y < currentCell.y) { currentCell.top = false; nextCell.bottom = false; }
-      else if (nextCell.x > currentCell.x) { currentCell.right = false; nextCell.left = false; }
-      else if (nextCell.y > currentCell.y) { currentCell.bottom = false; nextCell.top = false; }
-      else if (nextCell.x < currentCell.x) { currentCell.left = false; nextCell.right = false; }
+      // Remove walls between current and next
+      if (nextCell.y < currentCell.y) { currentCell.top = false; nextCell.bottom = false; } // Above
+      else if (nextCell.x > currentCell.x) { currentCell.right = false; nextCell.left = false; } // Right
+      else if (nextCell.y > currentCell.y) { currentCell.bottom = false; nextCell.top = false; } // Below
+      else if (nextCell.x < currentCell.x) { currentCell.left = false; nextCell.right = false; } // Left
 
       nextCell.visited = true;
       currentCell = nextCell;
       visitedCount++;
     } else if (stack.length > 0) {
-      currentCell = stack.pop();
+      currentCell = stack.pop(); // Backtrack
     } else {
-       console.warn("Maze generation stopped: Stack empty but not all cells visited.");
-       break;
+       console.warn("Maze generation stopped unexpectedly: Stack empty but not all cells visited.");
+       break; // Should not happen in a standard grid
     }
   }
 
-  // Define entry and exit points
-  if (grid.length > 0 && grid[0]?.length > 0) {
-      if (grid[0][0]) grid[0][0].left = false; // Entry
-       const lastRowIndex = height - 1;
-       const lastColIndex = width - 1;
-       if (grid[lastRowIndex]?.[lastColIndex]) { // Optional chaining for safety
-           grid[lastRowIndex][lastColIndex].right = false; // Exit
-       } else {
-            console.warn(`Could not set exit point for ${width}x${height} maze at [${lastRowIndex}][${lastColIndex}]`);
-       }
-  } else {
-      console.warn("Grid is empty, cannot set entry/exit points.");
+  // Define entry and exit points reliably
+  if (grid[0]?.[0]) grid[0][0].left = false; // Entry at top-left
+  const lastRowIndex = height - 1;
+  const lastColIndex = width - 1;
+  if (grid[lastRowIndex]?.[lastColIndex]) {
+      grid[lastRowIndex][lastColIndex].right = false; // Exit at bottom-right
   }
 
-  console.log("Maze generation complete."); // Removed grid log for brevity
+  // console.log("Maze generation complete."); // Keep if needed
   return grid;
 };

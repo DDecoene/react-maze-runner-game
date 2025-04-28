@@ -7,18 +7,23 @@
   border-radius: 12px;
   box-shadow: 0 4px 15px var(--shadow-color);
   text-align: center;
-  max-width: 90%; /* Limit width */
+  width: 90%;
+  max-width: 800px;
+  box-sizing: border-box;
+  /* Rely on body flex for horizontal centering, control vertical margin */
   margin-top: 20px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center children horizontally */
+  align-items: center;
 }
 
 h1 {
   color: var(--text-color);
-  margin-top: 0; /* Remove default margin */
+  margin-top: 0;
   margin-bottom: 25px;
-  font-weight: 600; /* Use the bolder font weight */
+  font-weight: 600;
+  font-size: clamp(1.8em, 5vw, 2.5em); /* Responsive font size */
 }
 
 /* Controls Styling */
@@ -28,40 +33,42 @@ h1 {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 20px; /* Increased gap */
+  gap: 15px 20px; /* Row gap, Column gap */
   padding: 15px;
-  background-color: #fdfdfd; /* Slightly off-white bg for controls */
+  background-color: #fdfdfd;
   border-radius: 8px;
   border: 1px solid var(--border-color);
-  width: fit-content; /* Fit the content width */
-  max-width: 100%; /* Prevent overflow */
+  width: fit-content;
+  max-width: 100%;
 }
 
 .controls label {
   display: flex;
   align-items: center;
-  gap: 8px; /* Gap between label text and input */
+  gap: 8px;
   font-size: 0.95em;
+  white-space: nowrap; /* Prevent label text wrapping */
 }
 
 .controls input[type="number"] {
-  padding: 8px 10px; /* More padding */
+  padding: 8px 10px;
   width: 65px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 1em;
   font-family: var(--font-family);
+  text-align: center;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .controls input[type="number"]:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2); /* Subtle focus ring */
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
 }
 
 .controls button {
-  padding: 10px 20px; /* Larger button padding */
+  padding: 10px 20px;
   font-size: 1em;
   font-weight: 600;
   cursor: pointer;
@@ -74,33 +81,33 @@ h1 {
 
 .controls button:hover:not(:disabled) {
   background-color: var(--primary-hover);
-  transform: translateY(-1px); /* Slight lift on hover */
+  transform: translateY(-1px);
 }
 
 .controls button:disabled {
-  background-color: #bdc3c7; /* Greyer disabled state */
+  background-color: #bdc3c7;
   cursor: not-allowed;
   opacity: 0.7;
 }
 
 /* Game Info Styling */
 .game-info {
-    margin-top: 10px; /* Reduced margin */
-    margin-bottom: 15px; /* Space before maze area */
-    min-height: 50px; /* Increased min-height */
+    margin-top: 10px;
+    margin-bottom: 15px;
+    min-height: 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100%; /* Take full width within container */
+    width: 100%;
 }
 
 .timer {
-    font-size: 1.2em; /* Slightly larger timer */
+    font-size: 1.2em;
     font-weight: 600;
     color: var(--text-color);
     margin: 0 0 8px 0;
-    background-color: #f8f9fa; /* Very light bg */
+    background-color: #f8f9fa;
     padding: 5px 15px;
     border-radius: 4px;
     border: 1px solid var(--border-color);
@@ -109,7 +116,7 @@ h1 {
 .win-message {
   color: var(--success-color);
   font-weight: 600;
-  font-size: 1.4em; /* Larger win message */
+  font-size: 1.4em;
   margin-bottom: 5px;
   animation: fadeIn 0.5s ease-in-out;
 }
@@ -120,29 +127,116 @@ h1 {
     flex-direction: column;
     align-items: center;
     margin-top: 10px;
-    width: 100%; /* Ensure it takes space */
+    width: 100%;
+}
+/* Container holding the actual grid */
+.maze-area > div:first-child {
+  cursor: grab;
+}
+.maze-area > div:first-child:active {
+    cursor: grabbing;
 }
 
 
 .status-message {
     margin-top: 20px;
     font-style: italic;
-    color: #7f8c8d; /* Muted color */
+    color: #7f8c8d;
     min-height: 1.2em;
     padding: 20px;
     background-color: #f8f9fa;
     border: 1px dashed var(--border-color);
     border-radius: 8px;
-    display: inline-block; /* Center correctly */
+    display: inline-block;
 }
 
 .instructions {
     margin-top: 20px;
-    color: #7f8c8d; /* Muted color */
+    color: #7f8c8d;
     font-size: 0.9em;
 }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.9); }
   to { opacity: 1; transform: scale(1); }
+}
+
+
+/* --- Media Query for Mobile Adjustments --- */
+@media (max-width: 600px) {
+
+  .main-container {
+    padding: 20px 15px;
+    width: 95%;
+    margin-top: 10px;
+    margin-bottom: 20px; /* Keep or adjust vertical margin */
+    /* Horizontal centering is handled by body flex */
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  h1 {
+    font-size: 1.6em;
+    margin-bottom: 20px;
+  }
+
+  /* Adjust controls container */
+  .controls {
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    padding: 15px;
+    align-items: stretch;
+  }
+
+  /* Use Flexbox for label alignment */
+  .controls label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+    font-size: 1em;
+    text-align: left;
+  }
+
+  .controls input[type="number"] {
+     flex-grow: 0;
+     flex-shrink: 0;
+     width: 80px; /* Explicit width for input */
+     padding: 10px;
+     font-size: 1.1em;
+     text-align: center;
+  }
+
+   .controls button {
+     width: 100%;
+     padding: 12px 20px;
+     font-size: 1.1em;
+   }
+
+  .game-info {
+      min-height: 40px;
+      margin-bottom: 10px;
+      margin-top: 15px;
+  }
+
+  .timer {
+    font-size: 1.1em;
+    padding: 4px 12px;
+  }
+
+  .win-message {
+      font-size: 1.25em;
+  }
+
+  .instructions {
+      font-size: 0.85em;
+      margin-top: 15px;
+  }
+
+  /* Centering handled by body flex, explicit auto margin removed */
+  .maze-grid-container {
+    /* Ensure no conflicting margins interfere */
+  }
 }

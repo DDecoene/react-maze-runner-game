@@ -1,183 +1,128 @@
 // src/App.jsx
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { generateMaze } from './mazeGenerator';
+import { useMaze } from './hooks/useMaze'; // Import custom hooks
+import { useGameTimer } from './hooks/useGameTimer';
+import { useMazeRunnerControls } from './hooks/useMazeRunnerControls';
 import MazeGrid from './MazeGrid';
 import './App.css';
 
-const getStartPos = () => ({ x: 0, y: 0 });
-const getEndPos = (width, height) => ({ x: width - 1, y: height - 1 });
+// Validation function
+const isValidDimension = (dim) => {
+    const num = parseInt(dim, 10);
+    return !isNaN(num) && num >= 2 && num <= 100;
+};
 
 function App() {
-  // --- State ---
-  const [width, setWidth] = useState(20);
-  const [height, setHeight] = useState(15);
-  const [grid, setGrid] = useState(null);
-  const [generating, setGenerating] = useState(true);
-  const [startPos, setStartPos] = useState(getStartPos());
-  const [endPos, setEndPos] = useState(getEndPos(width, height));
-  const [playerPosition, setPlayerPosition] = useState(startPos);
-  const [gameStatus, setGameStatus] = useState('generating');
-  const [elapsedTime, setElapsedTime] = useState(0);
+  // --- State Management via Hooks ---
+  const {
+    grid,
+    startPos,
+    endPos,
+    width,
+    height,
+    setWidth,
+    setHeight,
+    isGenerating,
+    generateNewMaze,
+  } = useMaze(20, 15); // Default dimensions
 
-  // --- Refs ---
-  const intervalRef = useRef(null);
-  const mazeContainerRef = useRef(null);
-  const playerPositionRef = useRef(playerPosition);
-  const gameStatusRef = useRef(gameStatus);
-  const gridRef = useRef(grid);
-  const endPosRef = useRef(endPos);
+  const { elapsedTime, startTimer, stopTimer, resetTimer } = useGameTimer();
 
-  // --- Effect to keep state refs updated ---
-  useEffect(() => {
-    playerPositionRef.current = playerPosition;
-    gameStatusRef.current = gameStatus;
-    gridRef.current = grid;
-    endPosRef.current = endPos;
-  }, [playerPosition, gameStatus, grid, endPos]);
+  const [gameStatus, setGameStatus] = useState('generating'); // 'generating', 'ready', 'playing', 'won', 'error'
+  const mazeContainerRef = useRef(null); // Ref for touch events
 
-  // --- Timer Control Functions ---
-  const stopTimer = useCallback(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
+  // --- Game State Callbacks ---
+  const handleGameStart = useCallback(() => {
+      // Only change to playing if currently ready
+      setGameStatus(prevStatus => (prevStatus === 'ready' ? 'playing' : prevStatus));
   }, []);
 
-   const startTimer = useCallback(() => {
-     stopTimer();
-     setElapsedTime(0);
-     intervalRef.current = setInterval(() => {
-       setElapsedTime(prevTime => prevTime + 1);
-     }, 1000);
-   }, [stopTimer]);
+  const handleGameWin = useCallback(() => {
+      setGameStatus('won');
+      stopTimer();
+  }, [stopTimer]);
 
-  // --- Maze Generation ---
-  const handleGenerateMaze = useCallback(() => {
-    stopTimer();
-    setElapsedTime(0);
-    setGenerating(true);
+  // --- Setup Controls Hook ---
+  const { playerPosition } = useMazeRunnerControls(
+      startPos,
+      grid,
+      endPos,
+      gameStatus,
+      handleGameStart, // Pass callbacks
+      handleGameWin,
+      mazeContainerRef
+  );
+
+  // --- Effect to Generate Maze on Load & Dimension Change ---
+  useEffect(() => {
     setGameStatus('generating');
-    setGrid(null);
-
-    setTimeout(() => {
-      try {
-        const numericWidth = parseInt(width, 10);
-        const numericHeight = parseInt(height, 10);
-        if (isNaN(numericWidth) || isNaN(numericHeight) || numericWidth <= 0 || numericHeight <= 0) {
-            throw new Error(`Invalid dimensions: ${width}x${height}`);
-        }
-        const newGrid = generateMaze(numericWidth, numericHeight);
-        if (!newGrid || newGrid.length === 0 || !newGrid[0] || newGrid[0].length === 0) {
-            throw new Error("Maze generation failed.");
-        }
-        const newStartPos = getStartPos();
-        const newEndPos = getEndPos(numericWidth, numericHeight);
-
-        setGrid(newGrid);
-        setStartPos(newStartPos);
-        setEndPos(newEndPos);
-        setPlayerPosition(newStartPos);
+    resetTimer();
+    generateNewMaze(width, height)
+      .then(() => {
         setGameStatus('ready');
-        mazeContainerRef.current?.focus();
-
-      } catch (error) {
-        console.error("Error during maze generation:", error);
-        setGrid(null);
+        // Focus logic removed, less critical now
+        // mazeContainerRef.current?.focus();
+      })
+      .catch(error => {
+        console.error("App: Maze generation failed", error);
         setGameStatus('error');
         alert(`Failed to generate maze: ${error.message}. Check console.`);
-      } finally {
-        setGenerating(false);
-      }
-    }, 50);
-  }, [width, height, stopTimer]);
+      });
+  }, [width, height, generateNewMaze, resetTimer]); // Dependencies seem correct
 
-  // --- Effect for Initial Generation & Dimension Changes ---
+  // --- Effect to Start Game Timer ---
   useEffect(() => {
-    handleGenerateMaze();
-  }, [handleGenerateMaze, width, height]);
-
-  // --- Effect for Player Movement & Game Logic ---
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      const currentStatus = gameStatusRef.current;
-      const currentGrid = gridRef.current;
-      const currentPlayerPos = playerPositionRef.current;
-      const currentEndPos = endPosRef.current;
-
-      if (!currentGrid || currentGrid.length === 0 || !currentGrid[0] || currentGrid[0].length === 0 || currentStatus === 'won' || currentStatus === 'generating' || currentStatus === 'error') {
-        return;
-      }
-
-      if (currentStatus === 'ready') {
-          setGameStatus('playing');
+      if(gameStatus === 'playing') {
           startTimer();
       }
-
-      const { x, y } = currentPlayerPos;
-      if (y < 0 || y >= currentGrid.length || x < 0 || x >= currentGrid[0].length || !currentGrid[y]?.[x]) { return; }
-
-      const currentCell = currentGrid[y][x];
-      let newPos = { ...currentPlayerPos };
-      let moved = false;
-
-      switch (event.key) {
-        case 'ArrowUp': case 'w': if (!currentCell.top && y > 0) { newPos.y -= 1; moved = true; } break;
-        case 'ArrowDown': case 's': if (!currentCell.bottom && y < currentGrid.length - 1) { newPos.y += 1; moved = true; } break;
-        case 'ArrowLeft': case 'a': if (!currentCell.left && x > 0) { newPos.x -= 1; moved = true; } break;
-        case 'ArrowRight': case 'd': if (!currentCell.right && x < currentGrid[0].length - 1) { newPos.x += 1; moved = true; } break;
-        default: return;
-      }
-
-       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) { event.preventDefault(); }
-
-      if (moved) {
-        setPlayerPosition(newPos);
-
-        if (newPos.x === currentEndPos.x && newPos.y === currentEndPos.y) {
-          setGameStatus('won');
-          stopTimer();
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      stopTimer();
-    };
-  }, [startTimer, stopTimer]);
+      // Timer is stopped via handleGameWin callback
+  }, [gameStatus, startTimer]);
 
 
-  // --- Input Handlers ---
+  // --- Input Handlers for Dimension Controls ---
   const handleWidthChange = (event) => {
-    const newWidth = event.target.value;
-    if (newWidth === "" || (/^\d+$/.test(newWidth) && parseInt(newWidth, 10) <= 100)) {
-         setWidth(newWidth);
+    const value = event.target.value;
+    // Allow empty string or valid numbers
+    if (value === "" || (/^\d+$/.test(value) && parseInt(value, 10) <= 100)) {
+      setWidth(value === "" ? 0 : parseInt(value, 10)); // Set 0 if empty, trigger validation later
     }
   };
   const handleHeightChange = (event) => {
-     const newHeight = event.target.value;
-     if (newHeight === "" || (/^\d+$/.test(newHeight) && parseInt(newHeight, 10) <= 100)) {
-         setHeight(newHeight);
+     const value = event.target.value;
+     if (value === "" || (/^\d+$/.test(value) && parseInt(value, 10) <= 100)) {
+        setHeight(value === "" ? 0 : parseInt(value, 10));
      }
   };
-  const isValidDimension = (dim) => {
-      const num = parseInt(dim, 10);
-      return !isNaN(num) && num >= 2 && num <= 100;
-  };
+
+  // --- Trigger Generation Button Handler ---
+   const handleGenerateButtonClick = useCallback(() => {
+        // Only proceed if dimensions are valid
+       if (!isValidDimension(width) || !isValidDimension(height)) return;
+
+       console.log("Manual Generation Triggered");
+        setGameStatus('generating');
+        resetTimer();
+        generateNewMaze(width, height)
+          .then(() => { setGameStatus('ready'); })
+          .catch(error => {
+            console.error("App: Maze generation failed on button click", error);
+            setGameStatus('error');
+            alert(`Failed to generate maze: ${error.message}. Check console.`);
+          });
+   }, [width, height, generateNewMaze, resetTimer]); // Dependencies for the handler
+
 
   // --- Render ---
   return (
     <div className="main-container">
-        {/* *** UPDATED H1 *** */}
         <h1>React Maze Runner Game</h1>
 
-        {/* Controls */}
+        {/* Config Controls */}
         <div className="controls">
-            <label>Width: <input type="number" value={width} onChange={handleWidthChange} min="2" max="100" disabled={generating}/> </label>
-            <label>Height: <input type="number" value={height} onChange={handleHeightChange} min="2" max="100" disabled={generating} /></label>
-            <button onClick={handleGenerateMaze} disabled={generating || !isValidDimension(width) || !isValidDimension(height)}>
-            {generating ? 'Generating...' : 'Generate New Maze'}
+            <label>Width: <input type="number" value={width || ''} onChange={handleWidthChange} min="2" max="100" disabled={isGenerating} placeholder="2-100"/> </label>
+            <label>Height: <input type="number" value={height || ''} onChange={handleHeightChange} min="2" max="100" disabled={isGenerating} placeholder="2-100"/></label>
+            <button onClick={handleGenerateButtonClick} disabled={isGenerating || !isValidDimension(width) || !isValidDimension(height)}>
+            {isGenerating ? 'Generating...' : 'Generate New Maze'}
             </button>
         </div>
 
@@ -187,22 +132,26 @@ function App() {
             {gameStatus === 'won' && <h2 className="win-message">You Escaped! 🎉</h2>}
         </div>
 
-        {/* Maze Area container */}
+        {/* Maze Area */}
         <div className="maze-area">
-            <div ref={mazeContainerRef} tabIndex={-1} style={{ outline: 'none' }}>
-                {grid && grid.length > 0 && grid[0]?.length > 0 && gameStatus !== 'error' ? (
-                    <MazeGrid grid={grid} playerPosition={playerPosition} startPos={startPos} endPos={endPos} />
+            <div ref={mazeContainerRef} tabIndex={-1} style={{ outline: 'none', touchAction: 'none', cursor: 'grab' }}>
+                {grid && gameStatus !== 'generating' && gameStatus !== 'error' ? (
+                    <MazeGrid
+                        grid={grid}
+                        playerPosition={playerPosition}
+                        startPos={startPos}
+                        endPos={endPos} />
                 ) : (
                     <p className="status-message">
-                    {generating ? 'Generating maze...' :
-                    gameStatus === 'error' ? 'Error loading maze...' :
-                    'Loading maze...'}
+                        {isGenerating ? 'Generating maze...' :
+                         gameStatus === 'error' ? 'Error loading maze...' :
+                         'Loading maze...'}
                     </p>
                 )}
             </div>
 
             {/* Instructions */}
-            {(gameStatus === 'ready' || gameStatus === 'playing') && <p className="instructions">Use Arrow Keys (or WASD) to move.</p>}
+            {(gameStatus === 'ready' || gameStatus === 'playing') && <p className="instructions">Use Keyboard (Arrows/WASD) or Drag on the Maze.</p>}
         </div>
     </div> // End main-container
   );

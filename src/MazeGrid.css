@@ -1,28 +1,29 @@
 /* src/MazeGrid.css */
 .maze-grid-container {
-    margin: 10px auto 20px auto; /* Space around the grid */
-    display: inline-block; /* Allows centering via text-align on parent */
-    /* border: 2px solid #555; */ /* Border removed, using shadow instead */
-    background-color: black; /* Color for borders between cells */
-    line-height: 0; /* Prevent extra space between grid rows */
-    outline: none; /* Remove focus outline if container is focusable */
-    box-shadow: 0 2px 5px var(--shadow-color); /* Add subtle shadow (uses var from index.css) */
-    border-radius: 4px; /* Optional slight rounding */
-    overflow: hidden; /* Ensure child borders don't peek out if rounded */
-  }
-  
-  .maze-grid {
-    display: grid;
-    /* grid-template-columns is set dynamically via inline style */
-    background-color: #f0f0f0; /* Fallback background - color for paths */
-  }
-  
-  /* Error message styling if grid fails to render */
-  .error-message {
-      color: red;
-      font-weight: bold;
-      padding: 20px;
-      border: 1px solid red;
-      background-color: #ffe0e0;
-      margin: 20px; /* Add margin if it replaces the grid */
-  }
+  margin: 10px auto 20px auto; /* Space around the grid */
+  display: block; /* Ensures it takes full available width for centering */
+  width: fit-content; /* Allow it to size based on the grid content */
+  max-width: 100%; /* Prevent overflow if grid gets very wide somehow */
+  background-color: black; /* Color for borders between cells */
+  line-height: 0; /* Prevent extra space between grid rows */
+  outline: none; /* Remove focus outline if container is focusable */
+  box-shadow: 0 2px 5px var(--shadow-color); /* Add subtle shadow (uses var from index.css) */
+  border-radius: 4px; /* Optional slight rounding */
+  overflow: hidden; /* Ensure child borders don't peek out if rounded */
+}
+
+.maze-grid {
+  display: grid;
+  /* grid-template-columns is set dynamically via inline style */
+  background-color: #f0f0f0; /* Fallback background - color for paths */
+}
+
+/* Error message styling if grid fails to render */
+.error-message {
+    color: red;
+    font-weight: bold;
+    padding: 20px;
+    border: 1px solid red;
+    background-color: #ffe0e0;
+    margin: 20px; /* Add margin if it replaces the grid */
+}
