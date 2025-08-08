@@ -4,15 +4,10 @@
 
 A web application built with React and Vite that generates playable mazes using the Recursive Backtracking algorithm and allows users to navigate them using keyboard or touch controls.
 
-**(Optional: Add a Screenshot or GIF here!)**
-<!-- ![Maze Gameplay Screenshot](./path/to/your/screenshot.png) -->
 
 ## Live Demo
 
-Your site should be live at: **`https://<your-username>.github.io/react-maze-runner-game/`**
-*(Replace `<your-username>` with your actual GitHub username)*
-
-<!-- Example: [Try it out here!](https://your-username.github.io/react-maze-runner-game/) -->
+Live at: **`[https://<your-username>.github.io/react-maze-runner-game/](https://ddecoene.github.io/react-maze-runner-game/)`**
 
 ## Features
 
@@ -40,10 +35,9 @@ To run this project locally, follow these steps:
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/<your-username>/react-maze-runner-game.git
+    git clone https://github.com/DDecoene/react-maze-runner-game.git
     cd react-maze-runner-game
     ```
-    *(Replace `<your-username>`)*
 
 2.  **Install dependencies using pnpm:**
     ```bash
