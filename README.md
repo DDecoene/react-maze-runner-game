@@ -7,7 +7,7 @@ A web application built with React and Vite that generates playable mazes using 
 
 ## Live Demo
 
-Live at: **`[https://<your-username>.github.io/react-maze-runner-game/](https://ddecoene.github.io/react-maze-runner-game/)`**
+Live at: **https://ddecoene.github.io/react-maze-runner-game/**
 
 ## Features
 
